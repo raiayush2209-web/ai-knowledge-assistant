@@ -1,0 +1,9 @@
+.env/
+.env.example/
+node_modules/
+dist/
+build/
+TODO.md/
+server.js.backup/
+main.js
+ragService.js
