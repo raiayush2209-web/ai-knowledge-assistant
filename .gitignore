@@ -5,7 +5,7 @@ dist/
 build/
 TODO.md
 server.js.backup
-main.js
+
 ragService.js
 *.log
 *.backup
