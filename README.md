@@ -64,8 +64,18 @@ npm start
 
 The frontend uses relative `/api` paths for both dev proxying and production.
 
-## Notes
+## Deployment
 
-- The backend uses efficient chunking with overlap to preserve document context.
-- Pinecone stores each chunk as a vector record tagged with metadata.
-- The chat model is prompted with retrieved chunks so answers are grounded in your custom documents.
+### Backend (Render)
+The backend is deployed on Render at: https://ai-knowledge-assistant-z3co.onrender.com
+
+### Frontend (Vercel)
+The frontend is deployed on Vercel and calls the Render API directly.
+
+To deploy the frontend to Vercel:
+1. Push this repository to GitHub
+2. Connect the repository to Vercel
+3. Set the environment variable `VITE_API_BASE=https://ai-knowledge-assistant-z3co.onrender.com` in Vercel dashboard
+4. Deploy
+
+The `vercel.json` configuration ensures proper routing for the frontend deployment.

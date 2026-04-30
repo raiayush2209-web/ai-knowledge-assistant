@@ -15,7 +15,7 @@ const IngestTextSection = ({ source, setSource, setStatus }) => {
     setStatus('Indexing text...');
 
     try {
-      const result = await postJson('/ingest-text', {
+      const result = await postJson('/api/ingest-text', {
         text,
         source: source || 'manual-text',
       });

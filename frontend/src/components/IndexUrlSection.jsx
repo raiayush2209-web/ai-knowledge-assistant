@@ -15,7 +15,7 @@ const IndexUrlSection = ({ source, setSource, setStatus }) => {
     setStatus('Indexing website...');
 
     try {
-      const result = await postJson('/index-url', {
+      const result = await postJson('/api/index-url', {
         url,
         source: source || url,
       });

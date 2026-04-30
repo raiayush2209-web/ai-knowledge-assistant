@@ -15,7 +15,7 @@ const QuerySection = ({ setAnswer, setMatches, setStatus }) => {
     setStatus('Querying...');
 
     try {
-      const result = await postJson('/query', { query, topK: 5 });
+      const result = await postJson('/api/query', { query, topK: 5 });
       setAnswer(result.answer || 'No answer available.');
       setMatches(result.matches || []);
       setStatus(result.success ? 'Query completed.' : 'Query failed.');

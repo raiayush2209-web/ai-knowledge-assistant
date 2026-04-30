@@ -3,7 +3,6 @@ import { config } from './environment.js';
 
 export const pinecone = new Pinecone({
   apiKey: config.PINECONE_API_KEY,
-  controllerHostUrl: config.PINECONE_CONTROLLER_HOST,
 });
 
 export const getPineconeIndex = (namespace = config.DEFAULT_NAMESPACE) =>

@@ -19,7 +19,7 @@ const UploadSection = ({ source, setSource, setStatus }) => {
     formData.append('source', source || file.name);
 
     try {
-      const result = await uploadFile('/upload', formData);
+      const result = await uploadFile('/api/upload', formData);
       setStatus(result.success ? 'Document indexed successfully.' : 'Upload failed.');
     } catch (error) {
       setStatus(error.message);
