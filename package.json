@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run dev --workspace=backend",
-    "start": "npm run start --workspace=backend",
+    "start": "node backend/main.js",
     "build:frontend": "npm run build --workspace=frontend",
     "dev:frontend": "npm run dev --workspace=frontend",
     "install:all": "npm install && npm install --workspace=frontend && npm install --workspace=backend",
