@@ -133,7 +133,6 @@ const extractTextFromUrl = async (url) => {
       'User-Agent': 'AI-Knowledge-Assistant/1.0',
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     },
-    responseType: 'arraybuffer',
   });
 
   const contentType = response.headers['content-type'] || '';

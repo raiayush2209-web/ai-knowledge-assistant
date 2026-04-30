@@ -17,9 +17,9 @@ app.use('/', routes);
 
 // Production static file serving
 if (config.NODE_ENV === 'production') {
-  app.use(express.static(path.join(process.cwd(), 'client/dist')));
+  app.use(express.static(path.join(process.cwd(), '../frontend/dist')));
   app.get('*', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'client/dist', 'index.html'));
+    res.sendFile(path.join(process.cwd(), '../frontend/dist', 'index.html'));
   });
 }
 

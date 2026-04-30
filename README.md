@@ -6,7 +6,7 @@ This project implements a Node.js backend for semantic search over custom docume
 - Embeddings: Mistral Embed
 - LLM: Mistral chat model
 - Document chunking: LangChain RecursiveCharacterTextSplitter
-- Frontend: React (in `client/`)
+- Frontend: React (in `frontend/`)
 
 ## Backend
 
@@ -42,10 +42,10 @@ This project implements a Node.js backend for semantic search over custom docume
 
 ## Frontend
 
-A minimal React frontend is scaffolded in `client/`. Install and run it separately:
+A minimal React frontend is scaffolded in `frontend/`. Install and run it separately:
 
 ```bash
-cd client
+cd frontend
 npm install
 npm run dev
 ```
@@ -55,9 +55,11 @@ During development, Vite proxies `/api` requests to `http://localhost:4000` so t
 To build and serve the frontend from the backend in production:
 
 ```bash
+cd frontend
 npm install
-npm run build:client
-NODE_ENV=production npm start
+npm run build
+cd ../backend
+npm start
 ```
 
 The frontend uses relative `/api` paths for both dev proxying and production.
