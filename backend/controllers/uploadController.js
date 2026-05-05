@@ -4,58 +4,84 @@ import { indexDocument } from '../services/pinecone.js';
 import { config } from '../config/environment.js';
 
 export const uploadFile = async (req, res) => {
+  const uploadedFiles = [];
+  if (req.file) uploadedFiles.push(req.file);
+  if (req.files?.file) uploadedFiles.push(...req.files.file);
+  if (req.files?.files) uploadedFiles.push(...req.files.files);
+
   try {
-    if (!req.file) {
+    if (!uploadedFiles.length) {
       console.error('[UPLOAD] No file provided');
       return res.status(400).json({ error: 'Missing file upload.' });
     }
 
-    const source = req.body.source || req.file.originalname;
     const namespace = req.body.namespace || config.DEFAULT_NAMESPACE;
+    const results = [];
 
-    console.log(`[UPLOAD] File: ${req.file.originalname}, size: ${req.file.size}, path: ${req.file.path}`);
+    for (const file of uploadedFiles) {
+      const source = req.body.source || file.originalname;
+      console.log(`[UPLOAD] File: ${file.originalname}, size: ${file.size}, path: ${file.path}`);
 
-    let text;
-    try {
-      text = await extractTextFromFile(req.file.path, req.file.originalname);
-      console.log(`[UPLOAD] Extracted ${text.length} chars`);
-    } catch (extractError) {
-      console.error('[UPLOAD] Text extraction error:', extractError.message);
-      throw new Error(`Text extraction failed: ${extractError.message}`);
+      let text;
+      try {
+        text = await extractTextFromFile(file.path, file.originalname);
+        console.log(`[UPLOAD] Extracted ${text.length} chars from ${file.originalname}`);
+      } catch (extractError) {
+        console.error('[UPLOAD] Text extraction error:', extractError.message);
+        results.push({ filename: file.originalname, success: false, error: extractError.message });
+        continue;
+      }
+
+      if (!text || text.trim().length === 0) {
+        results.push({ filename: file.originalname, success: false, error: 'No readable text found in file' });
+        continue;
+      }
+
+      try {
+        const indexResult = await indexDocument({
+          source,
+          text,
+          metadata: { filename: file.originalname },
+          namespace,
+        });
+        console.log(`[UPLOAD] Successfully indexed ${file.originalname} with ${indexResult.indexedChunks} chunks`);
+        results.push({
+          filename: file.originalname,
+          success: true,
+          indexedChunks: indexResult.indexedChunks,
+          source,
+          namespace,
+        });
+      } catch (indexError) {
+        console.error('[UPLOAD] Indexing error:', indexError.message);
+        results.push({ filename: file.originalname, success: false, error: indexError.message });
+      }
     }
 
-    if (!text || text.trim().length === 0) {
-  return res.status(400).json({
-    error: "No readable text found in file"
-  });
-}
+    const successCount = results.filter((item) => item.success).length;
+    const allFailed = successCount === 0;
+    const responseStatus = allFailed ? 500 : 200;
 
-    let indexResult;
-    try {
-      indexResult = await indexDocument({
-        source,
-        text,
-        metadata: { filename: req.file.originalname },
-        namespace,
-      });
-      console.log(`[UPLOAD] Successfully indexed with ${indexResult.indexedChunks} chunks`);
-    } catch (indexError) {
-      console.error('[UPLOAD] Indexing error:', indexError.message);
-      throw new Error(`Indexing failed: ${indexError.message}`);
-    }
-
-    return res.json({ success: true, data: indexResult });
+    return res.status(responseStatus).json({
+      success: !allFailed,
+      files: results,
+      totalFiles: uploadedFiles.length,
+      successfulFiles: successCount,
+    });
   } catch (error) {
     console.error('[UPLOAD] Error:', error.message);
     console.error('[UPLOAD] Stack:', error.stack);
     return res.status(500).json({ error: error.message || 'Upload failed' });
   } finally {
-    if (req.file && req.file.path) {
-      try {
-        await fs.unlink(req.file.path);
-        console.log(`[UPLOAD] Cleaned up temporary file: ${req.file.path}`);
-      } catch (unlinkError) {
-        console.warn(`[UPLOAD] Failed to clean up file: ${unlinkError.message}`);
+    const cleanupFiles = uploadedFiles.length ? uploadedFiles : [];
+    for (const file of cleanupFiles) {
+      if (file.path) {
+        try {
+          await fs.unlink(file.path);
+          console.log(`[UPLOAD] Cleaned up temporary file: ${file.path}`);
+        } catch (unlinkError) {
+          console.warn(`[UPLOAD] Failed to clean up file: ${unlinkError.message}`);
+        }
       }
     }
   }

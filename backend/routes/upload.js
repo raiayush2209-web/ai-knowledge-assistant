@@ -15,7 +15,12 @@ const upload = multer({
 
 const router = express.Router();
 
-router.post('/upload', upload.single('file'), uploadFile);
+const uploadFields = upload.fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'files', maxCount: 10 },
+]);
+
+router.post('/upload', uploadFields, uploadFile);
 router.post('/index-url', indexUrl);
 router.post('/ingest-text', ingestText);
 

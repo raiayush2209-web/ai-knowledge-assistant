@@ -3,6 +3,8 @@ import UploadSection from './components/UploadSection.jsx';
 import IndexUrlSection from './components/IndexUrlSection.jsx';
 import IngestTextSection from './components/IngestTextSection.jsx';
 import QuerySection from './components/QuerySection.jsx';
+import CompareSection from './components/CompareSection.jsx';
+import DocumentGuidance from './components/DocumentGuidance.jsx';
 import SourceSection from './components/SourceSection.jsx';
 import Results from './components/Results.jsx';
 
@@ -19,11 +21,14 @@ function App() {
         <p>Upload documents, index websites, and ask questions against your custom content.</p>
       </header>
 
+      <DocumentGuidance />
+
       <SourceSection source={source} setSource={setSource} />
       <UploadSection source={source} setSource={setSource} setStatus={setStatus} />
       <IndexUrlSection source={source} setSource={setSource} setStatus={setStatus} />
       <IngestTextSection source={source} setSource={setSource} setStatus={setStatus} />
       <QuerySection setAnswer={setAnswer} setMatches={setMatches} setStatus={setStatus} />
+      <CompareSection setAnswer={setAnswer} setMatches={setMatches} setStatus={setStatus} />
 
       <div className="status">{status}</div>
       <Results answer={answer} matches={matches} />

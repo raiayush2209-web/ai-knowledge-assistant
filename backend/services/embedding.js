@@ -4,8 +4,8 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { config } from '../config/environment.js';
 
 const textSplitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 800,
-  chunkOverlap: 150,
+  chunkSize: 500,
+  chunkOverlap: 100,
 });
 
 const embeddings = new MistralAIEmbeddings({
@@ -38,7 +38,7 @@ export const embedQuery = async (query) => {
 export const buildPrompt = (query, matches) => {
   const context = matches
     .map((match, index) => {
-      const source = match.metadata?.source || 'unknown';
+      const source = match.metadata?.filename || match.metadata?.source || 'unknown';
       const preview = match.metadata?.chunk || '';
       return `=== Document ${index + 1} from ${source} ===\n${preview}`;
     })
@@ -61,5 +61,66 @@ export const generateAnswer = async (query, matches) => {
 
   const messages = buildPrompt(query, matches);
   const response = await chatModel.invoke(messages);
+  return response?.text || response?.content || '';
+};
+
+export const generateComparison = async (query, matches) => {
+  if (!matches.length) {
+    return 'I could not find relevant information in the indexed documents for comparison. Try uploading additional documents or refining your question.';
+  }
+
+  // Group matches by filename/source
+  const groupedMatches = matches.reduce((acc, match) => {
+    const source = match.metadata?.filename || match.metadata?.source || 'unknown';
+    if (!acc[source]) acc[source] = [];
+    acc[source].push(match);
+    return acc;
+  }, {});
+
+  const sources = Object.keys(groupedMatches);
+  if (sources.length < 2) {
+    return 'Comparison requires content from at least 2 different documents. Please upload multiple documents and try again.';
+  }
+
+  // Build comparison context
+  const comparisonContext = sources
+    .map((source, index) => {
+      const sourceMatches = groupedMatches[source];
+      const content = sourceMatches
+        .map(match => match.metadata?.chunk)
+        .filter(Boolean)
+        .join(' ')
+        .slice(0, 1000); // Limit content per source
+
+      return `=== Document ${index + 1}: ${source} ===\n${content}`;
+    })
+    .join('\n\n');
+
+  const comparisonPrompt = [
+    new SystemMessage(
+      `You are a document comparison assistant. Compare and contrast the content from multiple documents provided below. Focus on similarities, differences, unique insights, and relationships between the documents. Provide a balanced analysis that highlights key points from each document. You are a helpful assistant.
+
+Rules:
+- Answer ONLY from the provided context
+- Keep answer SHORT and DIRECT
+- Do NOT add headings or formatting like ### or tables
+- If answer is not found, say "Not found in documents"
+- Avoid repetition.
+
+- If the answer is not in the context, say: "I couldn't find this in the uploaded documents."
+- If documents are very similar, note that in the answer.
+- If documents are very different, note that in the answer.
+- If documents have unique insights, highlight those in the answer.
+- If documents have relationships (e.g. one builds on another), explain that in the answer.
+- Do NOT hallucinate or add information not in the documents.
+- Focus on providing a clear comparison that directly addresses the user's question.
+`
+    ),
+    new HumanMessage(
+      `Compare the following documents in response to this question: "${query}"\n\n${comparisonContext}\n\nProvide a detailed comparison addressing the question, noting similarities and differences between the documents.`
+    ),
+  ];
+
+  const response = await chatModel.invoke(comparisonPrompt);
   return response?.text || response?.content || '';
 };

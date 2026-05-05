@@ -16,6 +16,7 @@ export const indexDocument = async ({ source, text, metadata = {}, namespace = c
     values: vector,
     metadata: {
       source,
+      filename: metadata.filename || source,
       chunk,
       length: chunk.length,
       ...metadata,
