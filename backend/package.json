@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@langchain/textsplitters": "^1.0.1",
     "@pinecone-database/pinecone": "^7.2.0",
     "axios": "^1.6.6",
     "cheerio": "^1.0.0-rc.12",
