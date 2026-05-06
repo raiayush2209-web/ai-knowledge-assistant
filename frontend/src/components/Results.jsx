@@ -1,3 +1,5 @@
+import { FaBook, FaFileAlt } from 'react-icons/fa';
+
 const Results = ({ answer, matches }) => (
   <section className="box">
     <div className="status">Status: {answer ? 'Results ready' : 'Waiting for query...'}</div>
@@ -9,8 +11,9 @@ const Results = ({ answer, matches }) => (
     {matches.length > 0 && (
       <div className="result">
         <h3>Supporting Content ({matches.length} matches)</h3>
-        <div style={{ marginBottom: '15px', fontSize: '14px', color: '#666' }}>
-          📚 Content sources used in this analysis:
+        <div style={{ marginBottom: '15px', fontSize: '14px', color: '#94a3b8' }}>
+          <FaBook style={{ marginRight: '0.5rem', color: '#6366f1' }} />
+          Content sources used in this analysis:
         </div>
         <ol>
           {matches.map((match) => (
@@ -22,8 +25,9 @@ const Results = ({ answer, matches }) => (
               backgroundColor: '#fafafa'
             }}>
               <div style={{ marginBottom: '8px' }}>
-                <strong style={{ color: '#2c5aa0', fontSize: '16px' }}>
-                  📄 {match.metadata?.filename || match.metadata?.source || 'Unknown source'}
+                <strong style={{ color: '#6366f1', fontSize: '16px' }}>
+                  <FaFileAlt style={{ marginRight: '0.5rem' }} />
+                  {match.metadata?.filename || match.metadata?.source || 'Unknown source'}
                 </strong>
                 <span style={{
                   marginLeft: '10px',

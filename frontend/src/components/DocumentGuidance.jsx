@@ -1,20 +1,27 @@
 import React from 'react';
+import { FaBook, FaFileAlt, FaLayerGroup, FaLightbulb } from 'react-icons/fa';
 
 const DocumentGuidance = () => {
   return (
     <div style={{
-      backgroundColor: '#f0f8ff',
-      border: '2px solid #1976d2',
+      backgroundColor: '#1e293b',
+      border: '2px solid #6366f1',
       borderRadius: '8px',
       padding: '20px',
       marginBottom: '20px',
-      fontFamily: 'Arial, sans-serif'
+      fontFamily: 'Inter, system-ui, sans-serif'
     }}>
-      <h2 style={{ marginTop: 0, color: '#1565c0' }}>📚 How to Use This RAG System</h2>
+      <h2 style={{ marginTop: 0, color: '#6366f1' }}>
+        <FaBook style={{ marginRight: '0.5rem' }} />
+        How to Use This RAG System
+      </h2>
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px' }}>
-        <div style={{ padding: '15px', backgroundColor: '#e8f5e9', borderRadius: '6px', border: '1px solid #4caf50' }}>
-          <h3 style={{ marginTop: 0, color: '#2e7d32' }}>📄 Single Document Workflow</h3>
+        <div style={{ padding: '15px', backgroundColor: '#0f172a', borderRadius: '6px', border: '1px solid #10b981' }}>
+          <h3 style={{ marginTop: 0, color: '#10b981' }}>
+            <FaFileAlt style={{ marginRight: '0.5rem' }} />
+            Single Document Workflow
+          </h3>
           <ol style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
             <li><strong>Upload 1 PDF/Document</strong> - Use "Upload document(s)" section</li>
             <li><strong>Ask Questions</strong> - Use "Ask a question" section to query your document</li>
@@ -28,8 +35,11 @@ const DocumentGuidance = () => {
           </p>
         </div>
 
-        <div style={{ padding: '15px', backgroundColor: '#fff3e0', borderRadius: '6px', border: '1px solid #ff9800' }}>
-          <h3 style={{ marginTop: 0, color: '#e65100' }}>📊 Multiple Document Workflow</h3>
+        <div style={{ padding: '15px', backgroundColor: '#0f172a', borderRadius: '6px', border: '1px solid #f59e0b' }}>
+          <h3 style={{ marginTop: 0, color: '#f59e0b' }}>
+            <FaLayerGroup style={{ marginRight: '0.5rem' }} />
+            Multiple Document Workflow
+          </h3>
           <ol style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
             <li><strong>Upload 2+ PDFs/Documents</strong> - Use file selection and "Add more files"</li>
             <li><strong>Choose Your Analysis:</strong>
@@ -50,7 +60,10 @@ const DocumentGuidance = () => {
       </div>
 
       <div style={{ marginTop: '15px', padding: '12px', backgroundColor: '#fce4ec', borderRadius: '6px', borderLeft: '4px solid #c2185b' }}>
-        <strong style={{ color: '#880e4f' }}>💡 Pro Tips:</strong>
+        <strong style={{ color: '#f59e0b' }}>
+          <FaLightbulb style={{ marginRight: '0.5rem' }} />
+          Pro Tips:
+        </strong>
         <ul style={{ marginTop: '8px', marginBottom: 0, paddingLeft: '20px', fontSize: '14px' }}>
           <li>You can add more files anytime by selecting additional files in the upload section</li>
           <li>Use the "Clear All" button to start fresh with a new set of documents</li>

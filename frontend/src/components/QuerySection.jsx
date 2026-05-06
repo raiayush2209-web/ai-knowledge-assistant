@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { postJson } from '../services/api.js';
 import SectionCard from './SectionCard.jsx';
+import { FaCheck, FaLightbulb } from 'react-icons/fa';
 
 const QuerySection = ({ setAnswer, setMatches, setStatus }) => {
   const [query, setQuery] = useState('');
@@ -37,11 +38,13 @@ const QuerySection = ({ setAnswer, setMatches, setStatus }) => {
         />
         <button type="submit">Search & Answer</button>
       </form>
-      <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f5e9', borderRadius: '4px', fontSize: '14px', color: '#2e7d32' }}>
-        ✅ <strong>Works with single or multiple documents:</strong> Ask questions about your uploaded PDFs or documents. The system will search through all content and provide answers based on what it finds.
+      <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#1e293b', borderRadius: '4px', fontSize: '14px', color: '#94a3b8', border: '1px solid #334155' }}>
+        <FaCheck style={{ color: '#10b981', marginRight: '0.5rem' }} />
+        <strong>Works with single or multiple documents:</strong> Ask questions about your uploaded PDFs or documents. The system will search through all content and provide answers based on what it finds.
       </div>
-      <div style={{ marginTop: '10px', fontSize: '13px', color: '#666' }}>
-        💡 <strong>Examples:</strong><br/>
+      <div style={{ marginTop: '10px', fontSize: '13px', color: '#94a3b8' }}>
+        <FaLightbulb style={{ color: '#f59e0b', marginRight: '0.5rem' }} />
+        <strong>Examples:</strong><br/>
         • For 1 document: "Summarize the main points" or "What are the key findings?"<br/>
         • For multiple: "Which document discusses...?" or "Compare approach A vs B"
       </div>

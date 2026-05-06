@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { uploadFile } from '../services/api.js';
 import SectionCard from './SectionCard.jsx';
+import { FaLightbulb, FaCheck, FaTimes } from 'react-icons/fa';
 
 const UploadSection = ({ source, setSource, setStatus }) => {
   const [files, setFiles] = useState([]);
@@ -79,8 +80,9 @@ const UploadSection = ({ source, setSource, setStatus }) => {
             onChange={handleFileChange}
             style={{ marginBottom: '10px' }}
           />
-          <div style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
-            💡 Select multiple files at once, or add more files by selecting again. Duplicates are automatically removed.
+          <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '10px' }}>
+            <FaLightbulb style={{ marginRight: '0.5rem', color: '#f59e0b' }} />
+            Select multiple files at once, or add more files by selecting again. Duplicates are automatically removed.
           </div>
         </div>
 
@@ -154,7 +156,10 @@ const UploadSection = ({ source, setSource, setStatus }) => {
                 marginBottom: '5px',
                 color: fileResult.success ? '#155724' : '#721c24'
               }}>
-                <strong>{fileResult.filename}</strong>: {fileResult.success ? '✅ Indexed successfully' : `❌ Failed - ${fileResult.error}`}
+                <strong>{fileResult.filename}</strong>: {fileResult.success ?
+                  <><FaCheck style={{ color: '#10b981', marginRight: '0.5rem' }} /> Indexed successfully</> :
+                  <><FaTimes style={{ color: '#ef4444', marginRight: '0.5rem' }} /> Failed - {fileResult.error}</>
+                }
               </li>
             ))}
           </ul>

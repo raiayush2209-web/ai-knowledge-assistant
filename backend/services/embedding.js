@@ -79,7 +79,7 @@ export const generateComparison = async (query, matches) => {
 
   const sources = Object.keys(groupedMatches);
   if (sources.length < 2) {
-    return 'Comparison requires content from at least 2 different documents. Please upload multiple documents and try again.';
+    return `Found information from ${sources.length} document(s). Comparison requires content from at least 2 different documents. Try uploading more documents or use a different query that matches multiple documents.`;
   }
 
   // Build comparison context

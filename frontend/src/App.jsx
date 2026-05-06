@@ -1,37 +1,22 @@
-import { useState } from 'react';
-import UploadSection from './components/UploadSection.jsx';
-import IndexUrlSection from './components/IndexUrlSection.jsx';
-import IngestTextSection from './components/IngestTextSection.jsx';
-import QuerySection from './components/QuerySection.jsx';
-import CompareSection from './components/CompareSection.jsx';
-import DocumentGuidance from './components/DocumentGuidance.jsx';
-import SourceSection from './components/SourceSection.jsx';
-import Results from './components/Results.jsx';
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header.jsx';
+import Footer from './components/Footer.jsx';
+import Home from './components/Home.jsx';
+import UploadPage from './components/UploadPage.jsx';
+import QueryPage from './components/QueryPage.jsx';
+import ComparePage from './components/ComparePage.jsx';
 
 function App() {
-  const [source, setSource] = useState('');
-  const [status, setStatus] = useState('Ready');
-  const [answer, setAnswer] = useState('');
-  const [matches, setMatches] = useState([]);
-
   return (
     <div className="app-shell">
-      <header>
-        <h1>AI Knowledge Assistant</h1>
-        <p>Upload documents, index websites, and ask questions against your custom content.</p>
-      </header>
-
-      <DocumentGuidance />
-
-      <SourceSection source={source} setSource={setSource} />
-      <UploadSection source={source} setSource={setSource} setStatus={setStatus} />
-      <IndexUrlSection source={source} setSource={setSource} setStatus={setStatus} />
-      <IngestTextSection source={source} setSource={setSource} setStatus={setStatus} />
-      <QuerySection setAnswer={setAnswer} setMatches={setMatches} setStatus={setStatus} />
-      <CompareSection setAnswer={setAnswer} setMatches={setMatches} setStatus={setStatus} />
-
-      <div className="status">{status}</div>
-      <Results answer={answer} matches={matches} />
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/upload" element={<UploadPage />} />
+        <Route path="/query" element={<QueryPage />} />
+        <Route path="/compare" element={<ComparePage />} />
+      </Routes>
+      <Footer />
     </div>
   );
 }

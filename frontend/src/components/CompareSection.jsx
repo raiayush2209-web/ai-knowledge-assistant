@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { postJson } from '../services/api.js';
 import SectionCard from './SectionCard.jsx';
+import { FaExclamationTriangle, FaLightbulb } from 'react-icons/fa';
 
 const CompareSection = ({ setAnswer, setMatches, setStatus }) => {
   const [query, setQuery] = useState('');
@@ -37,11 +38,13 @@ const CompareSection = ({ setAnswer, setMatches, setStatus }) => {
         />
         <button type="submit">Compare Documents</button>
       </form>
-      <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#fff3e0', borderRadius: '4px', fontSize: '14px', color: '#e65100' }}>
-        ⚠️ <strong>Requires at least 2 documents:</strong> This feature analyzes and compares content across multiple documents. Upload 2 or more PDFs to use this feature.
+      <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#1e293b', borderRadius: '4px', fontSize: '14px', color: '#94a3b8', border: '1px solid #334155' }}>
+        <FaExclamationTriangle style={{ color: '#f59e0b', marginRight: '0.5rem' }} />
+        <strong>Requires at least 2 documents:</strong> This feature analyzes and compares content across multiple documents. Upload 2 or more PDFs to use this feature.
       </div>
-      <div style={{ marginTop: '10px', fontSize: '13px', color: '#666' }}>
-        💡 <strong>Examples:</strong><br/>
+      <div style={{ marginTop: '10px', fontSize: '13px', color: '#94a3b8' }}>
+        <FaLightbulb style={{ color: '#f59e0b', marginRight: '0.5rem' }} />
+        <strong>Examples:</strong><br/>
         • "Compare the ethical considerations in these documents"<br/>
         • "What are the main differences between these approaches?"<br/>
         • "How do these documents address similar challenges differently?"
