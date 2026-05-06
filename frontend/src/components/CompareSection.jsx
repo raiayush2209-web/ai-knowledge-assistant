@@ -15,7 +15,7 @@ const CompareSection = ({ setAnswer, setMatches, setStatus }) => {
     setStatus('Comparing documents...');
 
     try {
-      const result = await postJson('/api/compare', { query, topK: 10 });
+      const result = await postJson('/api/compare', { query, topK: 50 });
       setAnswer(result.comparison || 'No comparison available.');
       setMatches(result.matches || []);
       setStatus(result.success ? 'Comparison completed.' : 'Comparison failed.');

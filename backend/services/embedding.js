@@ -90,7 +90,7 @@ export const generateComparison = async (query, matches) => {
         .map(match => match.metadata?.chunk)
         .filter(Boolean)
         .join(' ')
-        .slice(0, 1000); // Limit content per source
+        .slice(0, 2000); // Limit content per source
 
       return `=== Document ${index + 1}: ${source} ===\n${content}`;
     })

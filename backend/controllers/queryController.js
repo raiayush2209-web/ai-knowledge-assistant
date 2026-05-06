@@ -17,7 +17,7 @@ export const queryDocuments = async (req, res) => {
 
 export const compareDocuments = async (req, res) => {
   try {
-    const { query, namespace, topK = 10 } = req.body;
+    const { query, namespace, topK = 50 } = req.body;
     if (!query) return res.status(400).json({ error: 'Missing comparison query text.' });
 
     // Get more matches for comparison to ensure we have content from multiple sources

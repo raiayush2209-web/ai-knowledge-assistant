@@ -39,7 +39,9 @@ export const extractTextFromFile = async (filePath, filename) => {
     if (extension === '.html' || extension === '.htm') {
       const html = buffer.toString('utf-8');
       const $ = cheerio.load(html);
-      return cleanText($.root().text() || '');
+      $('script, style, noscript, svg, iframe, header, footer, nav, form, link, meta').remove();
+      const bodyText = $('body').text() || $.root().text();
+      return cleanText(bodyText || '');
     }
 
     return cleanText(buffer.toString('utf-8'));
@@ -66,5 +68,7 @@ export const extractTextFromUrl = async (url) => {
 
   const html = response.data.toString('utf-8');
   const $ = cheerio.load(html);
-  return cleanText($.root().text() || '');
+  $('script, style, noscript, svg, iframe, header, footer, nav, form, link, meta').remove();
+  const bodyText = $('body').text() || $.root().text();
+  return cleanText(bodyText || '');
 };
