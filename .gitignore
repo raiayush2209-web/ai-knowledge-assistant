@@ -12,3 +12,4 @@ main.js
 ragService.js
 *.log
 *.backup
+DATA_FLOW.md

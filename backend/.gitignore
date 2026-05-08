@@ -3,3 +3,4 @@ upload/
 .env
 node_modules/
 dist/
+DATA_FLOW.md
