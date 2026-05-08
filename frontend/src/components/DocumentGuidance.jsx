@@ -59,8 +59,8 @@ const DocumentGuidance = () => {
         </div>
       </div>
 
-      <div style={{ marginTop: '15px', padding: '12px', backgroundColor: '#fce4ec', borderRadius: '6px', borderLeft: '4px solid #c2185b' }}>
-        <strong style={{ color: '#f59e0b' }}>
+      <div style={{ marginTop: '15px', padding: '12px', backgroundColor: '#0f172a', borderRadius: '6px', borderLeft: '4px solid #3b82f6' }}>
+        <strong style={{ color: '#38bdf8' }}>
           <FaLightbulb style={{ marginRight: '0.5rem' }} />
           Pro Tips:
         </strong>
