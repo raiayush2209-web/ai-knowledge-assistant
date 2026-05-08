@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import path from 'path';
 import { extractTextFromFile, extractTextFromUrl } from '../services/textExtraction.js';
 import { indexDocument } from '../services/pinecone.js';
 import { config } from '../config/environment.js';
@@ -13,6 +14,14 @@ export const uploadFile = async (req, res) => {
     if (!uploadedFiles.length) {
       console.error('[UPLOAD] No file provided');
       return res.status(400).json({ error: 'Missing file upload.' });
+    }
+
+    // Validate that files were actually written to disk
+    for (const file of uploadedFiles) {
+      if (!file.path) {
+        console.error(`[UPLOAD] File ${file.originalname} has no path - multer failed to save`);
+        return res.status(500).json({ error: 'File upload failed - unable to save files to disk. Check server permissions.' });
+      }
     }
 
     const namespace = req.body.namespace || config.DEFAULT_NAMESPACE;
