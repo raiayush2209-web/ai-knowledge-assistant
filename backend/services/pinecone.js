@@ -8,6 +8,7 @@ export const indexDocument = async ({ source, text, metadata = {}, namespace = c
 
   const namespaceIndex = getPineconeIndex(namespace);
   const sourceKey = normalizeSource(source || 'document');
+  const documentId = metadata.documentId || `${sourceKey}_${Date.now()}`;
   const chunks = await createChunks(text);
   const embedded = await embedChunks(chunks);
 
@@ -15,6 +16,7 @@ export const indexDocument = async ({ source, text, metadata = {}, namespace = c
     id: `${sourceKey}_${index}_${Date.now()}`,
     values: vector,
     metadata: {
+      documentId,
       source,
       filename: metadata.filename || source,
       chunk,

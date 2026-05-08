@@ -35,10 +35,13 @@ export const embedQuery = async (query) => {
   return await embeddings.embedQuery(query);
 };
 
+const extractSourceLabel = (match) => match.metadata?.filename || match.metadata?.source || match.metadata?.documentId || 'unknown';
+const extractSourceKey = (match) => match.metadata?.documentId || match.metadata?.filename || match.metadata?.source || 'unknown';
+
 export const buildPrompt = (query, matches) => {
   const context = matches
     .map((match, index) => {
-      const source = match.metadata?.filename || match.metadata?.source || 'unknown';
+      const source = extractSourceLabel(match);
       const preview = match.metadata?.chunk || '';
       return `=== Document ${index + 1} from ${source} ===\n${preview}`;
     })
@@ -69,11 +72,11 @@ export const generateComparison = async (query, matches) => {
     return 'I could not find relevant information in the indexed documents for comparison. Try uploading additional documents or refining your question.';
   }
 
-  // Group matches by filename/source
+  // Group matches by unique document identity
   const groupedMatches = matches.reduce((acc, match) => {
-    const source = match.metadata?.filename || match.metadata?.source || 'unknown';
-    if (!acc[source]) acc[source] = [];
-    acc[source].push(match);
+    const sourceKey = extractSourceKey(match);
+    if (!acc[sourceKey]) acc[sourceKey] = [];
+    acc[sourceKey].push(match);
     return acc;
   }, {});
 
@@ -84,15 +87,16 @@ export const generateComparison = async (query, matches) => {
 
   // Build comparison context
   const comparisonContext = sources
-    .map((source, index) => {
-      const sourceMatches = groupedMatches[source];
+    .map((sourceKey, index) => {
+      const sourceMatches = groupedMatches[sourceKey];
+      const sourceLabel = extractSourceLabel(sourceMatches[0]);
       const content = sourceMatches
         .map(match => match.metadata?.chunk)
         .filter(Boolean)
         .join(' ')
         .slice(0, 2000); // Limit content per source
 
-      return `=== Document ${index + 1}: ${source} ===\n${content}`;
+      return `=== Document ${index + 1}: ${sourceLabel} ===\n${content}`;
     })
     .join('\n\n');
 
