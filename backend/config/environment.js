@@ -14,6 +14,8 @@ export const config = {
   PINECONE_SERVERLESS_REGION: process.env.PINECONE_SERVERLESS_REGION || 'us-east-1',
   PINECONE_API_KEY: process.env.PINECONE_API_KEY,
   PINECONE_CONTROLLER_HOST: process.env.PINECONE_CONTROLLER_HOST,
+  PINECONE_TTL_SECONDS: Number(process.env.PINECONE_TTL_SECONDS || 3600),
+  OCR_MAX_PAGES: Number(process.env.OCR_MAX_PAGES || 10),
   MISTRAL_API_KEY: process.env.MISTRAL_API_KEY,
   NODE_ENV: process.env.NODE_ENV || 'development'
 };

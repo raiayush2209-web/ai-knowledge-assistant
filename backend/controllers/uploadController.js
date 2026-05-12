@@ -36,7 +36,8 @@ export const uploadFile = async (req, res) => {
         text = await extractTextFromFile(file.path, file.originalname);
         console.log(`[UPLOAD] Extracted ${text.length} chars from ${file.originalname}`);
       } catch (extractError) {
-        console.error('[UPLOAD] Text extraction error:', extractError.message);
+        console.error('[UPLOAD] Text extraction error:', extractError);
+        console.error('[UPLOAD] Text extraction stack:', extractError.stack);
         results.push({ filename: file.originalname, success: false, error: extractError.message });
         continue;
       }
