@@ -70,10 +70,11 @@ export const uploadFile = async (req, res) => {
 
     const successCount = results.filter((item) => item.success).length;
     const allFailed = successCount === 0;
-    const responseStatus = allFailed ? 500 : 200;
+    const responseStatus = allFailed ? 502 : 200;
 
     return res.status(responseStatus).json({
       success: !allFailed,
+      ...(allFailed ? { error: results.map((item) => `${item.filename}: ${item.error}`).join('; ') } : {}),
       files: results,
       totalFiles: uploadedFiles.length,
       successfulFiles: successCount,

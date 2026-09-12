@@ -7,13 +7,25 @@ const jsonHeaders = {
 
 export const apiUrl = (path) => `${API_BASE}${path}`;
 
-export const fetchJson = async (path, options = {}) => {
-  const response = await fetch(apiUrl(path), options);
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data?.error || 'API request failed');
+export const fetchJson = async (path, { timeoutMs = 90_000, ...options } = {}) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(apiUrl(path), { ...options, signal: controller.signal });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.error || 'API request failed');
+    }
+    return data;
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('The request took too long. Please try again.');
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
-  return data;
 };
 
 export const postJson = async (path, body) => {

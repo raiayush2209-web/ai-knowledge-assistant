@@ -1,5 +1,5 @@
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import { MistralAIEmbeddings, ChatMistralAI } from '@langchain/mistralai';
+import { OllamaEmbeddings, ChatOllama } from '@langchain/ollama';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { config } from '../config/environment.js';
 
@@ -8,16 +8,17 @@ const textSplitter = new RecursiveCharacterTextSplitter({
   chunkOverlap: 100,
 });
 
-const embeddings = new MistralAIEmbeddings({
-  apiKey: config.MISTRAL_API_KEY,
+const embeddings = new OllamaEmbeddings({
+  baseUrl: config.OLLAMA_BASE_URL,
   model: config.EMBED_MODEL,
 });
 
-const chatModel = new ChatMistralAI({
-  apiKey: config.MISTRAL_API_KEY,
-  modelName: config.CHAT_MODEL,
+const chatModel = new ChatOllama({
+  baseUrl: config.OLLAMA_BASE_URL,
+  model: config.CHAT_MODEL,
   temperature: 0.2,
-  maxTokens: 1024,
+  // Keep CPU-only responses concise so requests complete promptly.
+  numPredict: 256,
 });
 
 export const createChunks = async (text) => {

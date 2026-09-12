@@ -15,10 +15,6 @@ if (!config.PINECONE_API_KEY) {
   console.error('[ERROR] PINECONE_API_KEY not set in environment variables');
   process.exit(1);
 }
-if (!config.MISTRAL_API_KEY) {
-  console.error('[ERROR] MISTRAL_API_KEY not set in environment variables');
-  process.exit(1);
-}
 
 // Middleware
 app.use(cors());

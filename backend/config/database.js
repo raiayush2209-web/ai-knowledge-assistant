@@ -1,6 +1,6 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 import { config } from './environment.js';
-
+//The Pinecone JavaScript SDK (officially released and maintained as the @pinecone-database/pinecone npm package) is a fully type-safe TypeScript/Node.js client designed for building AI-powered vector search applications, recommendation engines, and Retrieval-Augmented Generation (RAG) systems
 export const pinecone = new Pinecone({
   apiKey: config.PINECONE_API_KEY,
 });
