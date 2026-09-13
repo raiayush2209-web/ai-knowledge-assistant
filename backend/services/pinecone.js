@@ -36,7 +36,27 @@ export const indexDocument = async ({ source, text, metadata = {}, namespace = c
   const documentId = metadata.documentId || `${sourceKey}_${Date.now()}`;
   const expiryTimestamp = Date.now() + ttlSeconds * 1000;
   const chunks = await createChunks(text);
-  const embedded = await embedChunks(chunks);
+
+
+ const embedded = await embedChunks(chunks);
+
+  for (const { chunk, vector } of embedded) {
+    if (!vector || !vector.length) {
+      throw new Error('Embedding vector is empty');
+    }
+    if (vector.length !== config.PINECONE_DIMENSION) {
+      throw new Error(
+        `Embedding vector dimension (${vector.length}) does not match configured Pinecone dimension (${config.PINECONE_DIMENSION})`
+      );
+    }
+  }
+
+  console.log('[RAG DEBUG] Embeddings created', {
+    model: config.EMBED_MODEL,
+    configuredDimension: config.PINECONE_DIMENSION,
+    chunks: chunks.length,
+    vectorDimension: embedded[0]?.vector?.length,
+  });
 
   const records = embedded.map(({ chunk, vector }, index) => ({
     id: `${sourceKey}_${index}_${Date.now()}`,
@@ -52,8 +72,17 @@ export const indexDocument = async ({ source, text, metadata = {}, namespace = c
     },
   }));
 
+  //log before namespaceindex.upser 
+  console.log('[RAG DEBUG] Pinecone upsert', {
+  index: config.INDEX_NAME,
+  namespace,
+  records: records.length,
+  vectorDimension: records[0]?.values?.length,
+});
+
   await namespaceIndex.upsert({ records });
-  scheduleDocumentDeletion(namespace, documentId, records.map((record) => record.id), ttlSeconds);
+  // We rely on cleanupExpiredDocuments for durable cleanup instead of in-memory timeouts
+  // scheduleDocumentDeletion(namespace, documentId, records.map((record) => record.id), ttlSeconds);
 
   return { indexedChunks: records.length, source, namespace, sourceKey, documentId, expiryTimestamp };
 };

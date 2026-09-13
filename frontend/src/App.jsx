@@ -5,6 +5,7 @@ import Home from './components/Home.jsx';
 import UploadPage from './components/UploadPage.jsx';
 import QueryPage from './components/QueryPage.jsx';
 import ComparePage from './components/ComparePage.jsx';
+import LoginPage from './components/LoginPage.jsx';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/upload" element={<UploadPage />} />
         <Route path="/query" element={<QueryPage />} />
         <Route path="/compare" element={<ComparePage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
       <Footer />
     </div>

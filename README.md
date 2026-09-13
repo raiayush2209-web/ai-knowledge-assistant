@@ -3,21 +3,21 @@
 This project implements a Node.js backend for semantic search over custom documents using:
 
 - Vector database: Pinecone
-- Embeddings: Mistral Embed
-- LLM: Mistral chat model
+- Embeddings: OpenAI `text-embedding-3-small`
+- LLM: OpenAI `gpt-4o-mini`
 - Document chunking: LangChain RecursiveCharacterTextSplitter
 - Frontend: React (in `frontend/`)
 
 ## Backend
 
 ### Start
-1. Copy `.env.example` to `.env`
-2. Fill in `PINECONE_API_KEY`, `PINECONE_CONTROLLER_HOST`, `MISTRAL_API_KEY`, and optionally `PINECONE_INDEX_NAME`
-3. Install dependencies:
+1. Copy `backend/.env.example` to `backend/.env`
+2. Fill in the OpenAI, Pinecone, JWT, and authentication variables.
+4. Install dependencies:
    ```bash
    npm install
    ```
-4. Start the backend:
+5. Start the backend:
    ```bash
    npm start
    ```
@@ -29,14 +29,18 @@ This project implements a Node.js backend for semantic search over custom docume
 - `POST /api/ingest-text` — Index raw text directly
 - `POST /api/query` — Run semantic search and generate a context-aware answer
 - `GET /api/health` — Health check
+- `POST /api/auth/login` — Obtain a bearer token
 
 ### Example `POST /api/query`
+
+```http
+Authorization: Bearer <token from /api/auth/login>
+```
 
 ```json
 {
   "query": "What is the onboarding process for the internship?",
-  "topK": 5,
-  "namespace": "default"
+   "topK": 5
 }
 ```
 
@@ -62,7 +66,7 @@ cd ../backend
 npm start
 ```
 
-The frontend uses relative `/api` paths for both dev proxying and production.
+The frontend uses relative `/api` paths in development and `VITE_API_BASE` in production.
 
 ## Deployment
 
@@ -78,4 +82,4 @@ To deploy the frontend to Vercel:
 3. Set the environment variable `VITE_API_BASE=https://ai-knowledge-assistant-z3co.onrender.com` in Vercel dashboard
 4. Deploy
 
-The `vercel.json` configuration ensures proper routing for the frontend deployment.
+Configure the Vercel rewrite/fallback for React Router in the Vercel dashboard or deployment configuration.

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FaHome, FaUpload, FaSearch, FaExchangeAlt, FaRobot } from 'react-icons/fa';
+import { FaHome, FaUpload, FaSearch, FaExchangeAlt, FaRobot, FaSignInAlt } from 'react-icons/fa';
 
 const Header = () => {
   return (
@@ -15,6 +15,7 @@ const Header = () => {
             <li><Link to="/upload"><FaUpload /> Upload</Link></li>
             <li><Link to="/query"><FaSearch /> Query</Link></li>
             <li><Link to="/compare"><FaExchangeAlt /> Compare</Link></li>
+            <li><Link to="/login"><FaSignInAlt /> Sign in</Link></li>
           </ul>
         </nav>
       </div>

@@ -42,12 +42,13 @@ This is a well-structured RAG (Retrieval-Augmented Generation) backend built wit
 - **Modular Architecture**: Separated concerns with dedicated folders for routes, controllers, services, and utilities
 - **File Processing**: Supports  DOCX, TXT, and HTML files
 - **Vector Search**: Uses Pinecone for efficient similarity search
-- **AI Integration**: Mistral AI for embeddings and chat completion
+- **AI Integration**: OpenAI for embeddings and chat completion
 - **Text Chunking**: Intelligent text splitting for optimal retrieval
 
 ## Environment Variables
 
-Create a `.env` file 
+Create a `.env` file from `backend/.env.example`. The backend uses OpenAI models configured by
+`OPENAI_EMBEDDING_MODEL` and `OPENAI_CHAT_MODEL`.
 
 ## Running the Application
 

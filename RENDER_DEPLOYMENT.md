@@ -6,7 +6,7 @@
 2. **GitHub Repository** - Push your code to GitHub
 3. **API Keys Ready:**
    - Pinecone API Key
-   - Mistral API Key
+   - An OpenAI API key and Pinecone API key
 
 ## Step-by-Step Deployment
 
@@ -27,16 +27,19 @@ In Render Dashboard → Your Service → Environment:
 
 ```
 PINECONE_API_KEY=your_actual_pinecone_api_key
-MISTRAL_API_KEY=your_actual_mistral_api_key
 PINECONE_INDEX_NAME=ai-knowledge-assistant-v2
-PINECONE_DIMENSION=1536
+PINECONE_DIMENSION=1024
 PINECONE_METRIC=cosine
 PINECONE_SERVERLESS_CLOUD=aws
 PINECONE_SERVERLESS_REGION=us-east-1
 PINECONE_NAMESPACE=default
-MISTRAL_CHAT_MODEL=mistral-small
-MISTRAL_EMBED_MODEL=mistral-embed
-PORT=4000
+OPENAI_CHAT_MODEL=gpt-4o-mini
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+JWT_SECRET=long_random_production_secret
+AUTH_USERNAME=admin
+AUTH_PASSWORD=strong_production_password
+FRONTEND_URL=https://your-vercel-domain.vercel.app
+PORT=10000
 NODE_ENV=production
 ```
 
@@ -83,7 +86,6 @@ NODE_ENV=production
    ```
    Look for:
    - `[ERROR] PINECONE_API_KEY not set`
-   - `[ERROR] MISTRAL_API_KEY not set`
    - `[UPLOAD] Indexing error`
 
 3. **Verify Pinecone Connection**
@@ -91,9 +93,8 @@ NODE_ENV=production
    - Ensure index exists in Pinecone
    - Check API key permissions
 
-4. **Verify Mistral Connection**
-   - Test API key validity
-   - Ensure API key has embedding and chat permissions
+4. **Verify OpenAI Connection**
+   - Confirm `OPENAI_API_KEY` is valid and has access to both configured models
 
 5. **Check File Permissions**
    - Render has limited `/tmp` directory
@@ -207,7 +208,7 @@ Look for messages like:
 - Render free tier: Good for testing
 - Paid tier: Recommended for production
 - Pinecone: Serverless pricing (consumption-based)
-- Mistral: Pay-per-API-call
+- OpenAI: Cost depends on model usage
 
 ## Redeploy Steps
 
@@ -233,16 +234,18 @@ After making code changes:
 
 ### Required Variables
 - `PINECONE_API_KEY` - Pinecone API authentication
-- `MISTRAL_API_KEY` - Mistral AI API authentication
+- `OPENAI_API_KEY` - OpenAI API authentication
+- `JWT_SECRET` - Token signing secret
+- `AUTH_USERNAME` and `AUTH_PASSWORD` - Portfolio app login credentials
 
 ### Optional Variables (with defaults)
 - `PORT` - Default: 4000
 - `NODE_ENV` - Default: development
 - `PINECONE_INDEX_NAME` - Default: ai-knowledge-assistant-v2
-- `PINECONE_DIMENSION` - Default: 1536
+- `PINECONE_DIMENSION` - Default: 1024
 - `PINECONE_METRIC` - Default: cosine
-- `MISTRAL_CHAT_MODEL` - Default: mistral-small
-- `MISTRAL_EMBED_MODEL` - Default: mistral-embed
+- `OPENAI_CHAT_MODEL` - Default: gpt-4o-mini
+- `OPENAI_EMBEDDING_MODEL` - Default: text-embedding-3-small
 
 ## Security Checklist
 
@@ -258,5 +261,5 @@ After making code changes:
 
 - [Render Documentation](https://render.com/docs)
 - [Pinecone Documentation](https://docs.pinecone.io)
-- [Mistral AI Documentation](https://docs.mistral.ai)
+- [OpenAI Documentation](https://platform.openai.com/docs)
 - Project Issues & Bug Reports: Create GitHub Issue

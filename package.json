@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "description": "RAG Application Monorepo",
   "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "dev": "npm run dev --workspace=backend",
     "start": "node backend/server.js",
+    "build": "npm run build:frontend",
     "build:frontend": "npm run build --workspace=frontend",
     "dev:frontend": "npm run dev --workspace=frontend",
     "install:all": "npm install && npm install --workspace=frontend && npm install --workspace=backend",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm test --workspace=backend"
   },
 
   "keywords": [],

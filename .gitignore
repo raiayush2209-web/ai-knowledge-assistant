@@ -1,5 +1,5 @@
 .env
-.env.example/
+backend/uploads/
 client/
 node_modules/
 backend/node_modules/
@@ -13,3 +13,4 @@ ragService.js
 *.log
 *.backup
 DATA_FLOW.md
+.env.example
