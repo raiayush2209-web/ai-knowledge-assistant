@@ -20,33 +20,51 @@ if (!config.PINECONE_API_KEY) {
   process.exit(1);
 }
 
-// Allowed CORS origins
-const allowedOrigins = [
-   "https://ai-knowledge-assistant-frontend-beta.vercel.app",
-  "https://ai-knowledge-assistant-ckh8-6v0fepl3q.vercel.app",
- "https://ai-knowledge-assistant-ckh8-fbu3p76he.vercel.app",
-  "https://ai-knowledge-assistant-hgn6.vercel.app",
+ const allowedOrigins = [
+  "https://aiknowledgeassistentapplication.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
-  config.FRONTEND_URL,
-].filter(Boolean);
+];
 
-// CORS configuration supporting credentials (cookies) across Vercel -> Render
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-to-server)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error(`CORS policy does not allow access from origin: ${origin}`), false);
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  })
-);
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests without an Origin header
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.error(`[CORS] Blocked origin: ${origin}`);
+    return callback(new Error(`CORS blocked: ${origin}`));
+  },
+
+  credentials: true,
+
+  methods: [
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+    "PATCH",
+    "OPTIONS",
+  ],
+
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+  ],
+
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
+// Explicitly handle browser preflight requests
+app.options("*", cors(corsOptions));
 
 app.use(cookieParser());
 app.use(express.json({ limit: '15mb' }));
