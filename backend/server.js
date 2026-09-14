@@ -1,14 +1,18 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
 import { config } from './config/environment.js';
-import { ensurePineconeIndex } from './config/database.js';
+import { ensurePineconeIndex, connectMongoDB } from './config/database.js';
 import routes from './routes/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
+
+// Trust reverse proxy (Render, Vercel, etc.) for secure cookies & rate-limiting
+app.set('trust proxy', 1);
 
 // Validate required environment variables
 if (!config.PINECONE_API_KEY) {
@@ -16,12 +20,33 @@ if (!config.PINECONE_API_KEY) {
   process.exit(1);
 }
 
-// Middleware
+// Allowed CORS origins
+const allowedOrigins = [
+  'https://ai-knowledge-assistant-frontend-beta.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:4000',
+  config.FRONTEND_URL,
+].filter(Boolean);
 
+// CORS configuration supporting credentials (cookies) across Vercel -> Render
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS policy does not allow access from origin: ${origin}`), false);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 
-app.use(cors({
-  origin: 'https://ai-knowledge-assistant-frontend-beta.vercel.app'
-}));
+app.use(cookieParser());
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
@@ -60,6 +85,11 @@ if (config.NODE_ENV === 'production') {
 
 // Server startup
 const startServer = async () => {
+  try {
+    await connectMongoDB();
+  } catch (err) {
+    console.warn('[SERVER] Warning: MongoDB failed to connect at startup. Authentication routes requiring DB will return 500 until DB is available.', err.message);
+  }
   await ensurePineconeIndex();
   app.listen(config.PORT, () => {
     console.log(`AI Knowledge Assistant backend running at http://localhost:${config.PORT}`);

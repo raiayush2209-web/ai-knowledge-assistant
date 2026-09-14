@@ -1,41 +1,98 @@
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
-export const getAuthToken = () => window.localStorage.getItem('rag_auth_token');
-export const setAuthToken = (token) => window.localStorage.setItem('rag_auth_token', token);
-export const clearAuthToken = () => window.localStorage.removeItem('rag_auth_token');
-
 const jsonHeaders = {
   Accept: 'application/json',
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
 };
 
 export const apiUrl = (path) => `${API_BASE}${path}`;
 
-export const login = async (username, password) => {
+/**
+ * Register a new user
+ */
+export const registerUser = async ({ username, email, password }) => {
+  const response = await fetch(apiUrl('/api/auth/register'), {
+    method: 'POST',
+    headers: jsonHeaders,
+    credentials: 'include',
+    body: JSON.stringify({ username, email, password }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data?.error || data?.message || 'Registration failed');
+  }
+
+  return data;
+};
+
+/**
+ * Log in an existing user with username/email & password
+ */
+export const login = async (identifier, password) => {
   const response = await fetch(apiUrl('/api/auth/login'), {
     method: 'POST',
     headers: jsonHeaders,
-    body: JSON.stringify({ username, password }),
+    credentials: 'include',
+    body: JSON.stringify({ identifier, password }),
   });
+
   const data = await response.json();
-  if (!response.ok) throw new Error(data?.message || 'Login failed');
-  setAuthToken(data.token);
+  if (!response.ok) {
+    throw new Error(data?.error || data?.message || 'Login failed');
+  }
+
   return data;
+};
+
+/**
+ * Log out user and clear the HTTP-only session cookie
+ */
+export const logout = async () => {
+  try {
+    await fetch(apiUrl('/api/auth/logout'), {
+      method: 'POST',
+      headers: jsonHeaders,
+      credentials: 'include',
+    });
+  } catch (err) {
+    console.warn('[AUTH] Logout request error:', err);
+  }
+};
+
+/**
+ * Check current authenticated session
+ */
+export const getCurrentUser = async () => {
+  const response = await fetch(apiUrl('/api/auth/me'), {
+    method: 'GET',
+    headers: jsonHeaders,
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Unauthenticated');
+  }
+
+  return await response.json();
 };
 
 export const fetchJson = async (path, { timeoutMs = 90_000, ...options } = {}) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
   try {
     const response = await fetch(apiUrl(path), {
       ...options,
-      headers: { ...jsonHeaders, ...options.headers, Authorization: `Bearer ${getAuthToken() || ''}` },
+      credentials: 'include',
+      headers: {
+        ...jsonHeaders,
+        ...options.headers,
+      },
       signal: controller.signal,
     });
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data?.error || 'API request failed');
+      throw new Error(data?.error || data?.message || 'API request failed');
     }
     return data;
   } catch (error) {
@@ -59,7 +116,8 @@ export const postJson = async (path, body) => {
 export const uploadFile = async (path, formData) => {
   const response = await fetch(apiUrl(path), {
     method: 'POST',
-    headers: { Authorization: `Bearer ${getAuthToken() || ''}` },
+    credentials: 'include',
+    headers: {},
     body: formData,
   });
   

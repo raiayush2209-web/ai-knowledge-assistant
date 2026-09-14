@@ -1,6 +1,24 @@
 import { Pinecone } from '@pinecone-database/pinecone';
+import mongoose from 'mongoose';
 import { config } from './environment.js';
-//The Pinecone JavaScript SDK (officially released and maintained as the @pinecone-database/pinecone npm package) is a fully type-safe TypeScript/Node.js client designed for building AI-powered vector search applications, recommendation engines, and Retrieval-Augmented Generation (RAG) systems
+
+export const connectMongoDB = async () => {
+  if (!config.MONGODB_URI) {
+    console.warn('[MONGO] MONGODB_URI not set. MongoDB connection skipped or running in mock/offline mode.');
+    return;
+  }
+
+  try {
+    if (mongoose.connection.readyState === 1) {
+      return mongoose.connection;
+    }
+    await mongoose.connect(config.MONGODB_URI);
+    console.log('[MONGO] Connected to MongoDB Atlas successfully.');
+  } catch (error) {
+    console.error('[MONGO] Connection failed:', error.message);
+    throw error;
+  }
+};
 
 let pinecone;
 

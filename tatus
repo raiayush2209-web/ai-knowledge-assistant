@@ -1,0 +1,42 @@
+[1mdiff --cc backend/server.js[m
+[1mindex 0431d2e,7e6c209..0000000[m
+[1m--- a/backend/server.js[m
+[1m+++ b/backend/server.js[m
+[36m@@@ -18,29 -15,13 +18,37 @@@[m [mif (!config.PINECONE_API_KEY) [m
+    console.error('[ERROR] PINECONE_API_KEY not set in environment variables');[m
+    process.exit(1);[m
+  }[m
+[32m +if (!config.GEMINI_API_KEY) {[m
+[32m +  console.error('[ERROR] GEMINI_API_KEY not set in environment variables');[m
+[32m +  process.exit(1);[m
+[32m +}[m
+[32m +if (!config.JWT_SECRET || !config.AUTH_USERNAME || !config.AUTH_PASSWORD) {[m
+[32m +  console.error('[ERROR] JWT_SECRET, AUTH_USERNAME, and AUTH_PASSWORD must be configured');[m
+[32m +  process.exit(1);[m
+[32m +}[m
+  [m
+  // Middleware[m
+[32m++<<<<<<< HEAD[m
+[32m +app.use(helmet());[m
+[32m +const corsOptions = {[m
+[32m +  origin: config.NODE_ENV === 'production' ? config.FRONTEND_URL : ['http://localhost:5173', 'http://127.0.0.1:5173'],[m
+[32m +  optionsSuccessStatus: 200[m
+[32m +};[m
+[32m +app.use(cors(corsOptions));[m
+[32m +const limiter = rateLimit({[m
+[32m +  windowMs: 15 * 60 * 1000, // 15 minutes[m
+[32m +  max: 100, // limit each IP to 100 requests per windowMs[m
+[32m +  message: 'Too many requests from this IP, please try again later.'[m
+[32m +});[m
+[32m +app.use('/api/', limiter);[m
+[32m +[m
+[32m++=======[m
+[32m+ [m
+[32m+ [m
+[32m+ app.use(cors({[m
+[32m+   origin: 'https://ai-knowledge-assistant-frontend-beta.vercel.app'[m
+[32m+ }));[m
+[32m++>>>>>>> agents/pasted-text-processing[m
+  app.use(express.json({ limit: '15mb' }));[m
+  app.use(express.urlencoded({ extended: true, limit: '15mb' }));[m
+  [m

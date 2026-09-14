@@ -6,20 +6,24 @@ import UploadPage from './components/UploadPage.jsx';
 import QueryPage from './components/QueryPage.jsx';
 import ComparePage from './components/ComparePage.jsx';
 import LoginPage from './components/LoginPage.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
+import { ProtectedRoute } from './components/ProtectedRoute.jsx';
 
 function App() {
   return (
-    <div className="app-shell">
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/upload" element={<UploadPage />} />
-        <Route path="/query" element={<QueryPage />} />
-        <Route path="/compare" element={<ComparePage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
-      <Footer />
-    </div>
+    <AuthProvider>
+      <div className="app-shell">
+        <Header />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />
+          <Route path="/query" element={<ProtectedRoute><QueryPage /></ProtectedRoute>} />
+          <Route path="/compare" element={<ProtectedRoute><ComparePage /></ProtectedRoute>} />
+        </Routes>
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }
 

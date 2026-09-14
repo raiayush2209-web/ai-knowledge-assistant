@@ -8,6 +8,7 @@ import {
 } from '../services/textExtraction.js';
 
 import { indexDocument } from '../services/pinecone.js';
+import { Document } from '../models/Document.js';
 import { config } from '../config/environment.js';
 
 
@@ -164,12 +165,11 @@ export const uploadFile = async (req, res) => {
     }
 
     // --------------------------------------------------------
-    // Namespace
+    // Namespace derivation from authenticated user
     // --------------------------------------------------------
 
-    const namespace =
-      req.user?.namespace ||
-      config.DEFAULT_NAMESPACE;
+    const userId = req.user?.id;
+    const namespace = userId ? `user_${userId}` : (req.user?.namespace || config.DEFAULT_NAMESPACE);
 
     const results = [];
 
@@ -248,6 +248,7 @@ export const uploadFile = async (req, res) => {
     text,
     metadata: {
       filename: file.originalname,
+      userId,
     },
     namespace,
   });
@@ -256,6 +257,23 @@ export const uploadFile = async (req, res) => {
     `[UPLOAD] INDEXING COMPLETE: ${file.originalname}`,
     indexResult
   );
+
+  // Track document in MongoDB for authenticated user
+  if (userId) {
+    try {
+      await Document.create({
+        userId,
+        documentId: indexResult.documentId,
+        filename: file.originalname,
+        source: req.body?.source || file.originalname,
+        type: 'upload',
+        namespace,
+        indexedChunks: indexResult.indexedChunks,
+      });
+    } catch (dbErr) {
+      console.warn(`[UPLOAD] Failed to record document in MongoDB: ${dbErr.message}`);
+    }
+  }
 
          results.push({
     filename: file.originalname,
@@ -353,9 +371,8 @@ export const indexUrl = async (req, res) => {
   try {
     const { url, source } = req.body;
 
-    const namespace =
-      req.user?.namespace ||
-      config.DEFAULT_NAMESPACE;
+    const userId = req.user?.id;
+    const namespace = userId ? `user_${userId}` : (req.user?.namespace || config.DEFAULT_NAMESPACE);
 
     if (!url) {
       return res.status(400).json({
@@ -448,9 +465,26 @@ export const indexUrl = async (req, res) => {
       text,
       metadata: {
         url,
+        userId,
       },
       namespace,
     });
+
+    if (userId) {
+      try {
+        await Document.create({
+          userId,
+          documentId: data.documentId,
+          filename: url,
+          source: source || url,
+          type: 'url',
+          namespace,
+          indexedChunks: data.indexedChunks,
+        });
+      } catch (dbErr) {
+        console.warn(`[INDEX URL] Failed to record document in MongoDB: ${dbErr.message}`);
+      }
+    }
 
     return res.json({
       success: true,
@@ -479,9 +513,8 @@ export const ingestText = async (req, res) => {
   try {
     const { source, text } = req.body;
 
-    const namespace =
-      req.user?.namespace ||
-      config.DEFAULT_NAMESPACE;
+    const userId = req.user?.id;
+    const namespace = userId ? `user_${userId}` : (req.user?.namespace || config.DEFAULT_NAMESPACE);
 
     if (!text || text.trim().length === 0) {
       return res.status(400).json({
@@ -495,9 +528,26 @@ export const ingestText = async (req, res) => {
       text,
       metadata: {
         source: source || 'manual-text',
+        userId,
       },
       namespace,
     });
+
+    if (userId) {
+      try {
+        await Document.create({
+          userId,
+          documentId: data.documentId,
+          filename: source || 'manual-text',
+          source: source || 'manual-text',
+          type: 'text',
+          namespace,
+          indexedChunks: data.indexedChunks,
+        });
+      } catch (dbErr) {
+        console.warn(`[INGEST TEXT] Failed to record document in MongoDB: ${dbErr.message}`);
+      }
+    }
 
     return res.json({
       success: true,

@@ -25,7 +25,8 @@ const sendQueryError = (res, error) => {
 export const queryDocuments = async (req, res) => {
   try {
     let { query, topK = 5 } = req.body;
-    const namespace = req.user?.namespace || config.DEFAULT_NAMESPACE;
+    const userId = req.user?.id;
+    const namespace = userId ? `user_${userId}` : (req.user?.namespace || config.DEFAULT_NAMESPACE);
     if (!query) return res.status(400).json({ error: 'Missing query text.' });
     if (query.length > 1000) return res.status(400).json({ error: 'Query text is too long.' });
 
@@ -50,7 +51,8 @@ export const queryDocuments = async (req, res) => {
 export const compareDocuments = async (req, res) => {
   try {
     let { query, topK = 100 } = req.body;
-    const namespace = req.user?.namespace || config.DEFAULT_NAMESPACE;
+    const userId = req.user?.id;
+    const namespace = userId ? `user_${userId}` : (req.user?.namespace || config.DEFAULT_NAMESPACE);
     if (!query) return res.status(400).json({ error: 'Missing comparison query text.' });
     if (query.length > 1000) return res.status(400).json({ error: 'Query text is too long.' });
 
