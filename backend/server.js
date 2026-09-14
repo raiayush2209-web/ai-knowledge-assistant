@@ -28,7 +28,6 @@ if (!config.PINECONE_API_KEY) {
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests without an Origin header
     if (!origin) {
       return callback(null, true);
     }
@@ -62,9 +61,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Explicitly handle browser preflight requests
-app.options("*", cors(corsOptions));
 
 app.use(cookieParser());
 app.use(express.json({ limit: '15mb' }));
