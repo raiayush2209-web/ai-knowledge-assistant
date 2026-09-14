@@ -24,6 +24,7 @@ if (!config.PINECONE_API_KEY) {
 const allowedOrigins = [
    "https://ai-knowledge-assistant-frontend-beta.vercel.app",
   "https://ai-knowledge-assistant-ckh8-6v0fepl3q.vercel.app",
+ "https://ai-knowledge-assistant-ckh8-fbu3p76he.vercel.app",
   "https://ai-knowledge-assistant-hgn6.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
